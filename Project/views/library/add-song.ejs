@@ -1,0 +1,36 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/product.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <form class="product-form" action="/<% if (editing) { %>edit-song<% } else { %>add-song<% } %>" method="POST">
+            <div class="form-control">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" value="<% if (editing) { %><%= song.name %><% } %>">
+            </div>
+            <div class="form-control">
+                <label for="singer">Singer</label>
+                <input type="text" name="singer" id="singer" value="<% if (editing) { %><%= song.singer %><% } %>">
+            </div>
+
+            <% if (albums.length > 0) { %>
+            <label for="albums">Choose an album:</label>
+                
+                <select name="albumId" id="albumId">
+                    <% for (let album of albums) { %>
+                    <option value="<%= album._id %>"><%= album.name %></option>
+                    <% } %>
+                </select>
+                <% } %>
+
+                <% if (editing) { %>
+                <input type="hidden" value="<%= song._id %>" name="songId">
+                <% } %>
+            <button class="btn" type="submit"><% if (editing) { %>Update Song<% } else { %>Add Song<% } %></button>
+        </form>
+    </main>
+<%- include('../includes/end.ejs') %>
