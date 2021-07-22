@@ -37,7 +37,7 @@ exports.postEditCategory = (req, res, next) => {
   const categoryId = req.params.categoryId;
 
   Category.updateOne(
-    { id: categoryId },
+    { _id: categoryId },
     {
       $set: {
         name: updatedName,
@@ -55,9 +55,9 @@ exports.postEditCategory = (req, res, next) => {
 
 exports.postDeleteCategory = (req, res, next) => {
   const categoryId = req.params.categoryId;
-  Category.deleteOne({ id: categoryId })
+  Category.deleteOne({ _id: categoryId })
     .then((result) => {
-      console.log("DESTROYED ALBUM");
+      console.log("DESTROYED CATEGORY");
       res.json(result);
     })
     .catch((err) => console.log(err));
@@ -118,7 +118,7 @@ exports.postEditAlbum = (req, res, next) => {
 
 exports.postDeleteAlbum = (req, res, next) => {
   const albumId = req.params.albumId;
-  Album.deleteOne({ id: albumId })
+  Album.deleteOne({ _id: albumId })
     .then((result) => {
       console.log("DESTROYED ALBUM");
       res.json(result);
@@ -131,10 +131,13 @@ exports.postAddSong = (req, res, next) => {
   const name = req.body.name;
   const singer = req.body.singer;
   const albumId = req.body.albumId;
+  const categoryId = req.body.categoryId;
   const song = new Song({
     name: name,
     singer: singer,
     albumId: albumId,
+    categoryId: categoryId,
+    
   });
   song
     .save()
@@ -176,15 +179,17 @@ exports.postEditSong = (req, res, next) => {
   const updatedName = req.body.name;
   const updatedSinger = req.body.singer;
   const updatedAlbumId = req.body.albumId;
+  const updatedCategoryId = req.body.categoryId;
   const songId = req.params.songId;
 
   Song.updateOne(
-    { id: songId },
+    { _id: songId },
     {
       $set: {
         name: updatedName,
         singer: updatedSinger,
         albumId: updatedAlbumId,
+        categoryId: updatedCategoryId,
       },
     }
   )
@@ -204,8 +209,11 @@ exports.postDeleteSong = (req, res, next) => {
 
       Album.findById(albumId)
         .then((album) => {
-          album.showNbTracks = album.showNbTracks - 1;
-
+          if (album.showNbTracks <= 0) {
+            album.showNbTracks = 0;
+          } else {
+            album.showNbTracks = album.showNbTracks - 1;
+          }
           return album.save();
         })
         .then((result) => {
@@ -215,7 +223,7 @@ exports.postDeleteSong = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 
-  Song.remove({ id: songId })
+  Song.findOneAndDelete({ _id: songId })
     .then((result) => {
       console.log("DESTROYED Song");
       res.json(result);
