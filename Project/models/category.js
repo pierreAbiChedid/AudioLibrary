@@ -13,11 +13,11 @@ const categorySchema = new Schema({
   },
   createdDate: {
     type: Date,
-    default: Date.now,
   },
-  upadatedDate: {
+  updatedDate: {
     type: Date,
-  }
+  },
+  __v: { type: Number, select: false },
   
 });
 

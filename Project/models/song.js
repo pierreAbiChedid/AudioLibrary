@@ -21,6 +21,7 @@ const songSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Album",
   },
+  __v: { type: Number, select: false },
 });
 
 module.exports = mongoose.model("Song", songSchema);

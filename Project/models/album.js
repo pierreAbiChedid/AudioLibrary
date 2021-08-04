@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
@@ -12,18 +12,17 @@ const albumSchema = new Schema({
     required: true,
   },
 
-  showNbTracks : {
-    type: Number,
+  showNbTracks: {
+    type: Boolean,
   },
 
   createdDate: {
     type: Date,
-    default: Date.now,
   },
-  upadatedDate: {
+  updatedDate: {
     type: Date,
-  }
+  },
+  __v: { type: Number, select: false },
 });
 
-module.exports = mongoose.model('Album', albumSchema);
-
+module.exports = mongoose.model("Album", albumSchema);
