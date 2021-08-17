@@ -1,12 +1,11 @@
-const Category = require("../models/category");
-const Album = require("../models/album");
-const Song = require("../models/song");
+const Category = require("./models");
+const Song = require("../tracks/models");
 
 //Get all categories
 exports.getCategories = async (req, res, next) => {
   try {
-    categories = await Category.find();
-    res.send(categories);
+    const categories = await Category.find();
+    res.send({message:"success", result: categories});
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
@@ -17,7 +16,7 @@ exports.postAddCategory = async (req, res, next) => {
   const category = new Category({
     name: req.body.name,
     description: req.body.description,
-    createdDate: Date.now(),
+    createdDate: new Date(),
   });
   try {
     await category.save();
@@ -28,9 +27,6 @@ exports.postAddCategory = async (req, res, next) => {
 };
 
 exports.postEditCategory = async (req, res, next) => {
-  const updatedName = req.body.name;
-  const updatedDescription = req.body.description;
-  const updatedDate = Date.now();
   const categoryId = req.params.categoryId;
 
   try {
@@ -38,9 +34,9 @@ exports.postEditCategory = async (req, res, next) => {
       { _id: categoryId },
       {
         $set: {
-          name: updatedName,
-          description: updatedDescription,
-          updatedDate: updatedDate,
+          name: req.body.name,
+          description: req.body.description,
+          updatedDate: new Date(),
         },
       }
     );
@@ -54,9 +50,9 @@ exports.postDeleteCategory = async (req, res, next) => {
   const categoryId = req.params.categoryId;
 
   try {
-    const songs = await Song.find({ categoryId: categoryId });
-    if (songs.length > 0) {
-      return res.status(500).send("Cannot delete Category with existing songs");
+    const songs = await Song.findOne({ categoryId: categoryId });
+    if (songs) {
+      return res.status(409).send("Cannot delete Category with existing songs");
     } else {
       try {
         await Category.deleteOne({ _id: categoryId });

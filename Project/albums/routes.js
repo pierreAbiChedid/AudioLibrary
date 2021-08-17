@@ -1,6 +1,6 @@
 const express = require("express");
 
-const albumController = require("../controllers/album");
+const albumController = require("./controllers");
 
 const router = express.Router();
 

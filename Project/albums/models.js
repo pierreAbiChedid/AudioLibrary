@@ -14,6 +14,7 @@ const albumSchema = new Schema({
 
   showNbTracks: {
     type: Boolean,
+    default : true
   },
 
   createdDate: {

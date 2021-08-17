@@ -24,4 +24,6 @@ const songSchema = new Schema({
   __v: { type: Number, select: false },
 });
 
+songSchema.index({name: 1 });
+
 module.exports = mongoose.model("Song", songSchema);

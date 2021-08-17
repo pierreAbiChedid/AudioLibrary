@@ -1,12 +1,11 @@
-const Category = require("../models/category");
-const Album = require("../models/album");
-const Song = require("../models/song");
+const Album = require("./models");
+const Song = require("../tracks/models");
 
 //Get a list of all the albums
 exports.getAlbums = async (req, res, next) => {
   try {
-    const albums = await Album.find().sort({ createdDate: -1 });
-    res.send(albums);
+    const result = await Album.find().sort({ createdDate: -1 });
+    res.send({ message: "success", result: result });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
@@ -16,8 +15,8 @@ exports.getAlbums = async (req, res, next) => {
 exports.getAlbum = async (req, res, next) => {
   const albumId = req.params.albumId;
   try {
-    const album = await Album.findOne({ _id: albumId });
-    res.send(album);
+    const result = await Album.findOne({ _id: albumId });
+    res.send({ message: "success", result: result });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
@@ -25,15 +24,10 @@ exports.getAlbum = async (req, res, next) => {
 
 // Add an ALbum using POST method
 exports.postAddAlbum = async (req, res, next) => {
-  const name = req.body.name;
-  const description = req.body.description;
-  const createdDate = Date.now();
-  const showData = true;
   const album = new Album({
-    name: name,
-    description: description,
-    createdDate: createdDate,
-    showData: showData,
+    name: req.body.name,
+    description: req.body.description,
+    createdDate: new Date(),
   });
   try {
     await album.save();
@@ -44,18 +38,15 @@ exports.postAddAlbum = async (req, res, next) => {
 };
 
 exports.postEditAlbum = async (req, res, next) => {
-  const updatedName = req.body.name;
-  const updatedDescription = req.body.description;
-  const updatedDate = Date.now();
   const albumId = req.params.albumId;
   try {
     await Album.updateOne(
       { _id: albumId },
       {
         $set: {
-          name: updatedName,
-          description: updatedDescription,
-          updatedDate: updatedDate,
+          name: req.body.name,
+          description: req.body.description,
+          updatedDate: new Date(),
         },
       }
     );
@@ -86,29 +77,18 @@ exports.postDeleteAlbum = async (req, res, next) => {
   }
 };
 
-exports.getAlbumList = (req, res, next) => {
-  Song.aggregate([  
-    {
-      $lookup: {
-        from: "album",
-        localField: "albumId",
-        foreignField: "_id",
-        as: "album",
+exports.getAlbumList = async (req, res, next) => {
+  try {
+    const result = await Song.aggregate([
+      {
+        $group: {
+          _id: "$albumId",
+          numOfTracks: { $sum: 1 },
+        },
       },
-    },
-    { $match: { albumId: "album_id" } },
-    {
-      $group: {
-        _id: "$album",
-        numOfSongs: { $sum: 1 },
-        SongList: { $push: "$name" },
-      },
-    },
-  ])
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    ]);
+    res.send({ message: "success", result: result });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };

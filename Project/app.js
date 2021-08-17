@@ -1,28 +1,20 @@
-const path = require("path");
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
-
-const User = require('./models/user')
-
 const app = express();
 
-const albumRoutes = require("./routes/album");
-const categoryRoutes = require("./routes/category");
-const songRoutes = require("./routes/song");
-const userRoutes = require("./routes/user");
+require("dotenv/config");
 
-const MONGODB_URI =
-  "mongodb+srv://pierre:sEP6C4B90697701@cluster0.zg13b.mongodb.net/AudioLibrary?retryWrites=true&w=majority";
+const albumRoutes = require("./albums/routes");
+const categoryRoutes = require("./categories/routes");
+const songRoutes = require("./tracks/routes");
+const userRoutes = require("./users/routes");
 
 
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 
 app.use(albumRoutes);
 app.use(categoryRoutes);
@@ -30,9 +22,13 @@ app.use(songRoutes);
 app.use(userRoutes);
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(process.env.DB_CONNECTION)
   .then((result) => {
-    app.listen(3000);
+    const server = app.listen(3000);
+    const io = require('./socket').init(server);
+    io.on('connection', socket => {
+      console.log('Client connected');
+    });
   })
 
   .catch((err) => {
