@@ -12,7 +12,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  
+
   password: {
     type: String,
     required: true,
@@ -21,8 +21,18 @@ const userSchema = new Schema({
   registrationDate: {
     type: Date,
   },
+
+  status: {
+    type: String,
+  },
+
+  numOfAttempts: {
+    type: Number,
+  },
+
+  __v: { type: Number, select: false },
 });
 
-userSchema.index({email: 1 });
+userSchema.index({ email: 1 });
 
 module.exports = mongoose.model("User", userSchema);

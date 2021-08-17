@@ -1,7 +1,8 @@
-const Song = require("./models");
-const Album = require("../albums/models");
+const Song = require("./tracks-models");
+const Album = require("../albums/albums-models");
 const io = require("../socket");
 const mongoose = require("mongoose");
+
 
 exports.getTracks = async (body) => {
   try {
@@ -110,6 +111,7 @@ exports.getSongsByAlbum = async (req) => {
         
       ]);
       return songs;
+      //Second case
     } else {
       categoryId = mongoose.Types.ObjectId(req.query.categoryId);
       const songs = await Song.aggregate([

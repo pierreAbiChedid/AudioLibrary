@@ -1,6 +1,6 @@
-const Album = require("../albums/models");
-const Song = require("./models");
-const TracksService = require("./services");
+const Album = require("../albums/albums-models");
+const Song = require("./tracks-models");
+const TracksService = require("./tracks-services");
 
 exports.addSong = async (req, res, next) => {
   try {

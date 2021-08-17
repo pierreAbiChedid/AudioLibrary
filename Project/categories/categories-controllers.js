@@ -1,5 +1,5 @@
-const Category = require("./models");
-const Song = require("../tracks/models");
+const Category = require("./categories-models");
+const Song = require("../tracks/tracks-models");
 
 //Get all categories
 exports.getCategories = async (req, res, next) => {

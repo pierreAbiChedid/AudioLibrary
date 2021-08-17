@@ -1,5 +1,5 @@
-const Album = require("./models");
-const Song = require("../tracks/models");
+const Album = require("./albums-models");
+const Song = require("../tracks/tracks-models");
 
 //Get a list of all the albums
 exports.getAlbums = async (req, res, next) => {
