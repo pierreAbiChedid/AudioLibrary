@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const ValidationError = require("express-validation");
+const { ValidationError } = require("express-validation");
 const app = express();
 
 require("dotenv/config");
@@ -20,7 +20,13 @@ app.use(albumRoutes);
 app.use(categoryRoutes);
 app.use(songRoutes);
 app.use(userRoutes);
+app.use(function(err, req, res, next) {
+  if (err instanceof ValidationError) {
+    return res.status(err.statusCode).json(err)
+  }
 
+  return res.status(500).json(err)
+})
 
 mongoose
   .connect(process.env.DB_CONNECTION)
